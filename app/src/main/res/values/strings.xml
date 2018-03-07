@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">TextSty</string>
 
-    <string name="android_gifc"> </string>
-    <string name="android_gifb"> </string>
-    <string name="android_gifa"> </string>
+    <!--<string name="android_gifc"> </string>-->
+    <!--<string name="android_gifb"> </string>-->
+    <!--<string name="android_gifa"> </string>-->
 </resources>

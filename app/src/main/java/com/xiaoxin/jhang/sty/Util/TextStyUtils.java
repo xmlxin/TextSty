@@ -1,10 +1,6 @@
 package com.xiaoxin.jhang.sty.Util;
 
-import android.content.Context;
 import android.util.Log;
-import com.xiaoxin.jhang.sty.R;
-
-import java.util.Random;
 
 import static android.content.ContentValues.TAG;
 
@@ -17,46 +13,33 @@ import static android.content.ContentValues.TAG;
 
 public class TextStyUtils {
 
-    public static StringBuffer randomString(Context context,String content) {
-        Random random = new Random();
-        int randomInt = random.nextInt(12);
-        StringBuffer text = new StringBuffer("");
-        switch (randomInt) {
+    public static StringBuffer styTent(int position,String content) {
+
+        StringBuffer text;
+        switch (position) {
             case 0:
-                text =ua(context,content);
+                text = lineText(content);
                 break;
             case 1:
-                text = a(context,content);
+                text = triangle(content);
                 break;
             case 2:
-                text = ac_styTool(context,content);
+                text = Leaf(content);
                 break;
             case 3:
-                text = aac_styTool(context,content);
+                text = flower(content);
                 break;
             case 4:
-                text = c_styTool(context,content);
+                text = chrysantheOne(content);
                 break;
             case 5:
-                text = clickvip(content);
+                text = chrysantheTwo(content);
                 break;
             case 6:
-                text = clicksvip(content);
+                text = verticalLine(content);
                 break;
             case 7:
-                text = click(content);
-                break;
-            case 8:
-                text = bclick(content);
-                break;
-            case 9:
-                text = cclick(content);
-                break;
-            case 10:
-                dclick(content);
-                break;
-            case 11:
-                text = eclick(content);
+                text = cntrary(content);
                 break;
             default:
                 text = new StringBuffer(content);
@@ -66,11 +49,10 @@ public class TextStyUtils {
 
     /**
      * 横线字
-     * @param context
      * @param content
      * @return
      */
-    public static StringBuffer ua(Context context,String content) {
+    public static StringBuffer lineText(String content) {
         char[] a = content.toCharArray();
         StringBuffer b = new StringBuffer("");
         String mo = "妮̶";
@@ -80,58 +62,10 @@ public class TextStyUtils {
         return b;
     }
 
-    public static StringBuffer a(Context context,String content) {
-
-        char[] a = content.toCharArray();
-        StringBuffer b = new StringBuffer("");
-        String mo = context.getResources().getString(R.string.android_gifc);
-        for (char anA : a) {
-            b.append(mo.replace('n', anA));
-        }
-        return b;
-    }
-
-    public static StringBuffer ac_styTool(Context context,String content) {
-
-        char[] a = content.toCharArray();
-        StringBuffer b = new StringBuffer("");
-        String mo = context.getResources().getString(R.string.android_gifb);
-        for (char anA : a) {
-            b.append(mo.replace('n', anA));
-        }
-        return b;
-    }
-
-    public static StringBuffer aac_styTool(Context context,String content) {
-
-        char[] a = content.toCharArray();
-        StringBuffer b = new StringBuffer("");
-        String mo = context.getResources().getString(R.string.android_gifa);
-        for (char anA : a) {
-            b.append(mo.replace('n', anA));
-        }
-        return b;
-    }
-
-    /**
-     * 竖线A
-     */
-    public static StringBuffer c_styTool(Context context,String content) {
-
-        char[] a = content.toCharArray();
-        StringBuffer b = new StringBuffer("");
-        String mo = context.getResources().getString(R.string.android_gifa);
-        for (char anA : a) {
-            b.append(mo.replace('n', anA));
-
-        }
-      return b;
-    }
-
     /**
      * 三角
      */
-    public static StringBuffer clickvip(String content) {
+    public static StringBuffer triangle(String content) {
         char[] a = content.toCharArray();
         StringBuffer b = new StringBuffer("");
         String mo = null;
@@ -154,7 +88,7 @@ public class TextStyUtils {
     /**
      * 叶子
      */
-    public static StringBuffer clicksvip(String content) {
+    public static StringBuffer Leaf(String content) {
         char[] a = content.toCharArray();
         StringBuffer b = new StringBuffer("");
         String mo = "❦H❧";
@@ -167,7 +101,7 @@ public class TextStyUtils {
     /**
      * 花藤
      */
-    public static StringBuffer click(String content) {
+    public static StringBuffer flower(String content) {
         char[] a = content.toCharArray();
         StringBuffer b = new StringBuffer("");
         String mo = "ζั͡爱 ั͡✾";
@@ -180,7 +114,7 @@ public class TextStyUtils {
     /**
      * 菊花文
      */
-    public static StringBuffer bclick(String content) {
+    public static StringBuffer chrysantheOne(String content) {
         char[] a = content.toCharArray();
         StringBuffer b = new StringBuffer("");
         String mo = "爱҉";
@@ -193,7 +127,7 @@ public class TextStyUtils {
     /**
      * 菊花文B
      */
-    public static StringBuffer cclick(String content) {
+    public static StringBuffer chrysantheTwo(String content) {
         char[] a = content.toCharArray();
         StringBuffer b = new StringBuffer("");
         String mo = "敏ۣۖ";
@@ -207,7 +141,7 @@ public class TextStyUtils {
     /**
      * 竖直
      */
-    public static StringBuffer dclick(String content) {
+    public static StringBuffer verticalLine(String content) {
         char[] a = content.toCharArray();
         StringBuffer b = new StringBuffer("");
         String mo = "爱\n";
@@ -220,7 +154,7 @@ public class TextStyUtils {
     /**
      * 反字
      */
-    public static StringBuffer eclick(String content) {
+    public static StringBuffer cntrary(String content) {
         char[] a = content.toCharArray();
         StringBuffer b = new StringBuffer("");
         String mo = "‮ ‮ ‮爱";
