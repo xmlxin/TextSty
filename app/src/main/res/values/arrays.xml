@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string-array name="styContent">
+        <item>横线字</item>
+        <item>三角</item>
+        <item>叶子</item>
+        <item>花藤</item>
+        <item>菊花文A</item>
+        <item>菊花文B</item>
+        <item>菊花文C</item>
+        <item>竖直</item>
+        <item>反字</item>
+    </string-array>
 </resources>

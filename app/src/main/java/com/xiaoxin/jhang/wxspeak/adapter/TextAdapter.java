@@ -1,11 +1,11 @@
-package com.xiaoxin.jhang.sty.adapter;
+package com.xiaoxin.jhang.wxspeak.adapter;
 
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.xiaoxin.jhang.sty.R;
+import com.xiaoxin.jhang.wxspeak.R;
 
 import java.util.List;
 

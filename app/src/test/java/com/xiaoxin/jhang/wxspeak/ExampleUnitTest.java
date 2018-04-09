@@ -1,4 +1,4 @@
-package com.xiaoxin.jhang.sty;
+package com.xiaoxin.jhang.wxspeak;
 
 import org.junit.Test;
 

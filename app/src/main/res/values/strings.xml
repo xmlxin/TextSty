@@ -1,7 +1,5 @@
 <resources>
-    <string name="app_name">TextSty</string>
+    <string name="app_name">WxLeetSpeak</string>
 
-    <!--<string name="android_gifc"> </string>-->
-    <!--<string name="android_gifb"> </string>-->
-    <!--<string name="android_gifa"> </string>-->
+    <string name="accessibility_description">火星文</string>
 </resources>
