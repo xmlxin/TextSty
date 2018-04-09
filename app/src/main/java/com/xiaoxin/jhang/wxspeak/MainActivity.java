@@ -4,8 +4,10 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.xiaoxin.jhang.wxspeak.adapter.TextAdapter;
+import com.xiaoxin.jhang.wxspeak.util.AccessibilityUtil;
 import com.xiaoxin.jhang.wxspeak.util.Constant;
 import com.xiaoxin.jhang.wxspeak.util.SharedPreferencesUtils;
 import com.xiaoxin.jhang.wxspeak.util.TextStyUtils;
@@ -48,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
         etContent = (EditText) findViewById( R.id.et_content);
         rvList = (RecyclerView) findViewById(R.id.rv_list);
         initAdapter();
+
+        showDialog();
     }
 
     private void initAdapter() {
@@ -110,6 +115,26 @@ public class MainActivity extends AppCompatActivity {
 
     private ComponentName getAliasComponentName() {
         return new ComponentName(MainActivity.this, BuildConfig.APPLICATION_ID);
+    }
+
+    private void showDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("需要开启辅助功能吗?")
+                .setMessage("如果不能使用xposed,开启辅助功能配合悬浮窗权限效果也不错哦")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        AccessibilityUtil.checkAccessibility(MainActivity.this);
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                       Toast.makeText(MainActivity.this,"好吧(ಥ﹏ಥ)",Toast.LENGTH_SHORT).show();
+                    }
+                }).show().show();
     }
 
     /**
