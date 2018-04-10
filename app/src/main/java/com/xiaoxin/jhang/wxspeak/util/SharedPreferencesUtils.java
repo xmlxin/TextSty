@@ -1,6 +1,5 @@
 package com.xiaoxin.jhang.wxspeak.util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -45,8 +44,7 @@ public class SharedPreferencesUtils {
 
         private SharedPreferencesUtils(Context context, String spName) {
             mContext = context.getApplicationContext();
-//            sSharedPreferences = mContext.getSharedPreferences(spName, Context.MODE_PRIVATE);//
-            sSharedPreferences = mContext.getSharedPreferences(spName, Activity.MODE_WORLD_READABLE);//
+            sSharedPreferences = mContext.getSharedPreferences(spName, mContext.MODE_WORLD_READABLE);
             sEditor = sSharedPreferences.edit();
             mCurSPName = spName;
         }

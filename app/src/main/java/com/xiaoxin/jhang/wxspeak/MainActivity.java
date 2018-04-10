@@ -11,12 +11,15 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.xiaoxin.jhang.wxspeak.adapter.TextAdapter;
+import com.xiaoxin.jhang.wxspeak.adapter.TextWatcherAdapter;
 import com.xiaoxin.jhang.wxspeak.util.AccessibilityUtil;
 import com.xiaoxin.jhang.wxspeak.util.Constant;
 import com.xiaoxin.jhang.wxspeak.util.SharedPreferencesUtils;
@@ -37,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private TrackerWindowManager mWindowManagerUtil;
     public static String text;
     public boolean hasOnclick;
+    public boolean hasIsEmpty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,12 +51,21 @@ public class MainActivity extends AppCompatActivity {
 //        }
 
         mWindowManagerUtil = new TrackerWindowManager(this);
-        wxConfig = SharedPreferencesUtils.init(this, Constant.SPCONFIG);
         etContent = (EditText) findViewById( R.id.et_content);
         rvList = (RecyclerView) findViewById(R.id.rv_list);
         initAdapter();
 
         showDialog();
+        etContent.addTextChangedListener(new TextWatcherAdapter(){
+            @Override
+            public void afterTextChanged(Editable editable) {
+                super.afterTextChanged(editable);
+
+                if (TextUtils.isEmpty(editable.toString())) {
+                    hasIsEmpty = true;
+                }
+            }
+        });
     }
 
     private void initAdapter() {
@@ -77,11 +90,13 @@ public class MainActivity extends AppCompatActivity {
                 if (9 == position){
                     Toast.makeText(MainActivity.this,"暂不支持",Toast.LENGTH_SHORT).show();
                 }else {
-                    if (hasOnclick) {
-                        etContent.setText("");
-                    }else {
+                    if (!hasOnclick) {
                         text = etContent.getText().toString().trim();
                         hasOnclick = !hasOnclick;
+                    }
+                    if (hasIsEmpty) {
+                        text = etContent.getText().toString().trim();
+                        hasIsEmpty = false;
                     }
                     transform(position,text);
                 }
@@ -90,9 +105,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void transform(int position,String content) {
-        clipboard(TextStyUtils.styTent(position, content));
-        etContent.setText(TextStyUtils.styTent(position, content));
+        String styTent = TextStyUtils.styTent(position, content);
+        clipboard(styTent);
+        etContent.setText(styTent);
+        etContent.setSelection(styTent.length());
+        wxConfig = SharedPreferencesUtils.init(this, Constant.SPCONFIG);
         wxConfig.putInt(Constant.SPEAK,position);
+        Toast.makeText(this,"复制到粘贴板了",Toast.LENGTH_SHORT).show();
     }
 
     private void clipboard(String content) {

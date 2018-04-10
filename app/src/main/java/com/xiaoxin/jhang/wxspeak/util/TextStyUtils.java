@@ -1,5 +1,7 @@
 package com.xiaoxin.jhang.wxspeak.util;
 
+import android.text.TextUtils;
+
 /**
  * @author xiaoxin
  * @date 2018/1/6
@@ -10,7 +12,9 @@ package com.xiaoxin.jhang.wxspeak.util;
 public class TextStyUtils {
 
     public static String styTent(int position, String content) {
-
+        if (TextUtils.isEmpty(content)) {
+            return content;
+        }
         return transform(styConstant(position),content);
     }
 

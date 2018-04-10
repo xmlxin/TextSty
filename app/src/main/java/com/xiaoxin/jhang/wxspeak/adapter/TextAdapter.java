@@ -10,9 +10,10 @@ import com.xiaoxin.jhang.wxspeak.R;
 import java.util.List;
 
 /**
- * Created by chris on 2018/3/6 0006.
+ * @author: xiaoxin
+ * @date: 2018-03-6
+ * @description:
  */
-
 public class TextAdapter extends BaseQuickAdapter<String,BaseViewHolder> {
 
     public TextAdapter(@LayoutRes int layoutResId, @Nullable List<String> data) {
