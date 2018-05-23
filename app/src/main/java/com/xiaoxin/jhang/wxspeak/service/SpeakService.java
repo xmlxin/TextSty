@@ -4,6 +4,8 @@ import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
@@ -27,14 +29,26 @@ public class SpeakService extends AccessibilityService {
 
     /** 是否转换并发送 */
     public static boolean hasSend;
+    private String mPackageName;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         hasSend = intent.getBooleanExtra(TRANSFORM, false);
         if (hasSend) {
-            if (findEditTextSend(Constant.EDITTEXT_ID)) {
-                sendContent();
+            if (!TextUtils.isEmpty(mPackageName)) {
+                String et_id = "";
+                switch (mPackageName) {
+                    case Constant.TARGET_PACKAGE_MMS:
+                        et_id = Constant.getWxId(this);
+                        break;
+                    case Constant.PACKAGE_DD:
+                        et_id = Constant.DD_ET_ID;
+                        break;
+                }
+                if (findEditTextSend(et_id)) {
+                    sendContent();
+                }
             }
         }
 
@@ -44,6 +58,8 @@ public class SpeakService extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
 
+        mPackageName = event.getPackageName().toString();
+        Log.e(TAG, "onAccessibilityEvent: "+mPackageName );
         if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED) {//动态监听文本框内容变化并实时获取文本
             styContent(event);//实时转换 不可取
         }

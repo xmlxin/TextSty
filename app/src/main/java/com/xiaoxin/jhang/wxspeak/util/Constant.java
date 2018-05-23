@@ -1,5 +1,9 @@
 package com.xiaoxin.jhang.wxspeak.util;
 
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+
 /**
  * @author xiaoxin
  * @date 2018/04/08
@@ -16,9 +20,39 @@ public class Constant {
     public static final String SEND_MSG_MM_CLASS = "com.tencent.mm.ui.chatting.o";
     public static final String SEND_MSG_MM_METHOD = "EM";
 
-    public static final String EDITTEXT_ID = "com.tencent.mm:id/aac";
+    //wx
+    public static String EDITTEXT_ID;
     public static final String SEND_ID = "com.tencent.mm:id/aai";
     public static final String SEND_TEXT = "发送";
     public static final String BUTTON = "android.widget.Button";
     public static final String TEXTVIEW = "android.widget.TextView";
+
+    //dingding
+    public static String DD_ET_ID = "com.alibaba.android.rimet:id/et_sendmessage";
+    public static final String PACKAGE_DD = "com.alibaba.android.rimet";
+
+    //com.tencent.mm:id/aaa  6.6.6
+
+
+
+    public static String getWxId(Context ctx) {
+
+        switch (AppUtil.getVersionName(ctx,TARGET_PACKAGE_MMS)) {
+
+            case "6.6.5":
+                EDITTEXT_ID = "com.tencent.mm:id/aac";
+                break;
+            case "6.6.6":
+                EDITTEXT_ID = "com.tencent.mm:id/aaa";
+                break;
+            default:
+                EDITTEXT_ID = "com.tencent.mm:id/aaa";
+                break;
+        }
+        return EDITTEXT_ID;
+    }
+
+
+
+
 }
