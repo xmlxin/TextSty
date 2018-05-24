@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -20,6 +22,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.util.EventLogTags;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -32,6 +36,11 @@ import com.xiaoxin.jhang.wxspeak.util.Constant;
 import com.xiaoxin.jhang.wxspeak.util.SharedPreferencesUtils;
 import com.xiaoxin.jhang.wxspeak.util.TextStyUtils;
 import com.xiaoxin.jhang.wxspeak.util.TrackerWindowManager;
+import com.xiaoxin.jhang.wxspeak.util.TransApi;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +48,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private static final int WINDOWN_RESULT = 10;
     private RecyclerView rvList;
     private EditText etContent;
     TextAdapter mTextAdapter;
@@ -49,6 +57,21 @@ public class MainActivity extends AppCompatActivity {
     public static String text;
     public boolean hasOnclick;
     public boolean hasIsEmpty;
+    TransApi api;
+
+    Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            int what = msg.what;
+            if(what == 1){
+                clipboard(msg.obj.toString());
+                etContent.setText(msg.obj.toString());
+                etContent.setSelection(msg.obj.toString().length());
+                Toast.makeText(MainActivity.this,"复制到粘贴板了",Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,13 +81,30 @@ public class MainActivity extends AppCompatActivity {
 //            Toast.makeText(this, "模块未激活", Toast.LENGTH_SHORT).show();
 //        }
 
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    TransApi  api = new TransApi(Constant.APP_ID, Constant.SECURITY_KEY);
+
+                    String dst =  (new JSONObject( new JSONObject(api.getTransResult("你好", "auto", "en")).getJSONArray("trans_result").get(0).toString())).getString("dst");
+//                    String dst = jsonObject1.getString("dst");
+                    Log.e(TAG, "run: "+dst );
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+
         mWindowManagerUtil = new TrackerWindowManager(this);
         etContent = (EditText) findViewById( R.id.et_content);
         rvList = (RecyclerView) findViewById(R.id.rv_list);
         initAdapter();
 
-        showDialog();
-        checkPermission();
+//        showDialog();
+//        checkPermission();
         etContent.addTextChangedListener(new TextWatcherAdapter(){
             @Override
             public void afterTextChanged(Editable editable) {
@@ -100,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
         mList.add("竖直");
         mList.add("反字");
         mList.add("u型字");
+        mList.add("翻译成英文");
         mList.add("自定义文本");
         mTextAdapter = new TextAdapter(R.layout.text_recyle_item,mList);
         rvList.setAdapter(mTextAdapter);
@@ -107,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         mTextAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                if (9 == position){
+                if (adapter.getData().size()-1 == position){
                     Toast.makeText(MainActivity.this,"暂不支持",Toast.LENGTH_SHORT).show();
                 }else {
                     if (!hasOnclick) {
@@ -124,14 +165,33 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void transform(int position,String content) {
-        String styTent = TextStyUtils.styTent(position, content);
-        clipboard(styTent);
-        etContent.setText(styTent);
-        etContent.setSelection(styTent.length());
-        wxConfig = SharedPreferencesUtils.init(this, Constant.SPCONFIG);
+    private void transform(int position,final String content) {
+        if (position == 9) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        TransApi  api = new TransApi(Constant.APP_ID, Constant.SECURITY_KEY);
+                        String dst =  (new JSONObject(new JSONObject(api.getTransResult(content, "auto", "en")).getJSONArray("trans_result").get(0).toString())).getString("dst");
+                        //从全局池中返回一个message实例，避免多次创建message（如new Message）
+                        Message msg =Message.obtain();
+                        msg.obj = dst;
+                        msg.what = 1;
+                        mHandler.sendMessage(msg);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        }else {
+            String styTent = TextStyUtils.styTent(position, content);
+            clipboard(styTent);
+            etContent.setText(styTent);
+            etContent.setSelection(styTent.length());
+            Toast.makeText(this,"复制到粘贴板了",Toast.LENGTH_SHORT).show();
+        }
+        wxConfig = SharedPreferencesUtils.init(MainActivity.this, Constant.SPCONFIG);
         wxConfig.putInt(Constant.SPEAK,position);
-        Toast.makeText(this,"复制到粘贴板了",Toast.LENGTH_SHORT).show();
     }
 
     private void clipboard(String content) {

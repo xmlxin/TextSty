@@ -1,6 +1,12 @@
 package com.xiaoxin.jhang.wxspeak.util;
 
+import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @author xiaoxin
@@ -11,9 +17,14 @@ import android.text.TextUtils;
 
 public class TextStyUtils {
 
+    private static String transFormDst;
+
     public static String styTent(int position, String content) {
         if (TextUtils.isEmpty(content)) {
             return content;
+        }
+        if (position == 9) {
+            return transfromEn(content);
         }
         return transform(styConstant(position),content);
     }
@@ -54,11 +65,32 @@ public class TextStyUtils {
             case 8:
                 strConstant = "新ͧ";
                 break;
+            case 9:
+                strConstant = "新ͧ";
+//                strConstant = transfromEn();
+                break;
             default:
                 strConstant = "";
                 break;
         }
         return strConstant;
+    }
+
+    private static synchronized String transfromEn(final String content) {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    TransApi  api = new TransApi(Constant.APP_ID, Constant.SECURITY_KEY);
+                    transFormDst =  (new JSONObject(new JSONObject(api.getTransResult(content, "auto", "en")).getJSONArray("trans_result").get(0).toString())).getString("dst");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+        return transFormDst;
     }
 
     public static String transform(String strConstant,String content) {

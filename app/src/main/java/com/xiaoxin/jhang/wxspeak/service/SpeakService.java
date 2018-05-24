@@ -4,14 +4,21 @@ import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
 
+import com.xiaoxin.jhang.wxspeak.MainActivity;
 import com.xiaoxin.jhang.wxspeak.util.Constant;
 import com.xiaoxin.jhang.wxspeak.util.SharedPreferencesUtils;
+import com.xiaoxin.jhang.wxspeak.util.TransApi;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -30,6 +37,40 @@ public class SpeakService extends AccessibilityService {
     /** 是否转换并发送 */
     public static boolean hasSend;
     private String mPackageName;
+    private String et_id = "";
+
+    Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            int what = msg.what;
+            if(what == 1){
+                msg.obj.toString();
+                if (setEditTextContent(et_id, msg.obj.toString())) {
+                    sendContent();
+                }
+            }
+        }
+    };
+
+    private void transfromEn(final String content) {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    TransApi  api = new TransApi(Constant.APP_ID, Constant.SECURITY_KEY);
+                    String dst =  (new JSONObject(new JSONObject(api.getTransResult(content, "auto", "en")).getJSONArray("trans_result").get(0).toString())).getString("dst");
+                    Message msg =Message.obtain();
+                    msg.obj = dst;
+                    msg.what = 1;
+                    mHandler.sendMessage(msg);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -37,7 +78,7 @@ public class SpeakService extends AccessibilityService {
         hasSend = intent.getBooleanExtra(TRANSFORM, false);
         if (hasSend) {
             if (!TextUtils.isEmpty(mPackageName)) {
-                String et_id = "";
+
                 switch (mPackageName) {
                     case Constant.TARGET_PACKAGE_MMS:
                         et_id = Constant.EDITTEXT_ID;
@@ -46,9 +87,16 @@ public class SpeakService extends AccessibilityService {
                         et_id = Constant.DD_ET_ID;
                         break;
                 }
-                if (findEditTextSend(et_id)) {
-                    sendContent();
+                int position = SharedPreferencesUtils.init(this, Constant.SPCONFIG).getInt(Constant.SPEAK, 0);
+                if (position == 9 ) {
+                    // TODO: 2018/5/24
+                    transfromEn(findEditTextContent(et_id));
+                }else {
+                    if (findEditTextSend(et_id)) {
+                        sendContent();
+                    }
                 }
+
             }
         }
 
@@ -93,6 +141,18 @@ public class SpeakService extends AccessibilityService {
     }
 
     @SuppressLint("NewApi")
+    private String findEditTextContent(String editId) {
+        AccessibilityNodeInfo rootNode = getRootInActiveWindow();
+        if (rootNode != null) {
+            List<AccessibilityNodeInfo> editInfo = rootNode.findAccessibilityNodeInfosByViewId(editId);
+            if(editInfo!=null&&!editInfo.isEmpty() && editInfo.size() > 0 ){
+                return editInfo.get(0).getText().toString();
+            }
+        }
+        return "";
+    }
+
+    @SuppressLint("NewApi")
     private boolean findEditTextSend(String editId) {
         AccessibilityNodeInfo rootNode = getRootInActiveWindow();
         if (rootNode != null) {
@@ -108,6 +168,22 @@ public class SpeakService extends AccessibilityService {
     }
 
     @SuppressLint("NewApi")
+    private boolean setEditTextContent(String editId,String content) {
+        AccessibilityNodeInfo rootNode = getRootInActiveWindow();
+        if (rootNode != null) {
+            List<AccessibilityNodeInfo> editInfo = rootNode.findAccessibilityNodeInfosByViewId(editId);
+            if(editInfo!=null&&!editInfo.isEmpty() && editInfo.size() > 0 ){
+                Bundle bundle = new Bundle();
+                bundle.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,content);
+                editInfo.get(0).performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, bundle);
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    @SuppressLint("NewApi")
     private void sendContent() {
         AccessibilityNodeInfo nodeInfo = getRootInActiveWindow();
         if (nodeInfo != null) {
@@ -119,7 +195,6 @@ public class SpeakService extends AccessibilityService {
                         n.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     }
                 }
-
             }
         }
     }

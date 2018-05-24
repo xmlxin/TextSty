@@ -29,6 +29,9 @@ public class Constant {
     public static String DD_ET_ID = "com.alibaba.android.rimet:id/et_sendmessage";
     public static final String PACKAGE_DD = "com.alibaba.android.rimet";
 
+    public static final String APP_ID = "20180524000165309";
+    public static final String SECURITY_KEY = "v0Ct47KEYz_VLJgTsANZ";
+
     static {
 
         switch (AppUtil.getVersionName(MyApplication.mContext,TARGET_PACKAGE_MMS)) {
