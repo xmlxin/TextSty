@@ -1,12 +1,19 @@
 package com.xiaoxin.jhang.wxspeak;
 
+import android.Manifest;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,6 +39,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
+    private static final int WINDOWN_RESULT = 10;
     private RecyclerView rvList;
     private EditText etContent;
     TextAdapter mTextAdapter;
@@ -56,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         initAdapter();
 
         showDialog();
+        checkPermission();
         etContent.addTextChangedListener(new TextWatcherAdapter(){
             @Override
             public void afterTextChanged(Editable editable) {
@@ -66,6 +75,17 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+    }
+
+    private void checkPermission() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (!Settings.canDrawOverlays(MainActivity.this)) {
+                Toast.makeText(MainActivity.this,"需要取得权限以使用悬浮窗",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                startActivity(intent);
+            }
+        }
     }
 
     private void initAdapter() {
@@ -139,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
     private void showDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("需要开启辅助功能吗?")
-                .setMessage("如果不能使用xposed,开启辅助功能配合悬浮窗权限效果也不错哦")
+                .setMessage("如果不能使用xposed,开启辅助功能配合悬浮窗权限效果也不错哦,现在去开启辅助功能")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
 
                     @Override
@@ -151,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                       Toast.makeText(MainActivity.this,"好吧(ಥ﹏ಥ)",Toast.LENGTH_SHORT).show();
+//                       Toast.makeText(MainActivity.this,"好吧(ಥ﹏ಥ)",Toast.LENGTH_SHORT).show();
                     }
                 }).show().show();
     }
@@ -170,4 +190,5 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         mWindowManagerUtil.showWindow(this);
     }
+
 }
