@@ -40,7 +40,7 @@ public class SpeakService extends AccessibilityService {
                 String et_id = "";
                 switch (mPackageName) {
                     case Constant.TARGET_PACKAGE_MMS:
-                        et_id = Constant.getWxId(this);
+                        et_id = Constant.EDITTEXT_ID;
                         break;
                     case Constant.PACKAGE_DD:
                         et_id = Constant.DD_ET_ID;

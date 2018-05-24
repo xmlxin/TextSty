@@ -1,8 +1,6 @@
 package com.xiaoxin.jhang.wxspeak.util;
 
-import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
+import com.xiaoxin.jhang.wxspeak.MyApplication;
 
 /**
  * @author xiaoxin
@@ -31,14 +29,9 @@ public class Constant {
     public static String DD_ET_ID = "com.alibaba.android.rimet:id/et_sendmessage";
     public static final String PACKAGE_DD = "com.alibaba.android.rimet";
 
-    //com.tencent.mm:id/aaa  6.6.6
+    static {
 
-
-
-    public static String getWxId(Context ctx) {
-
-        switch (AppUtil.getVersionName(ctx,TARGET_PACKAGE_MMS)) {
-
+        switch (AppUtil.getVersionName(MyApplication.mContext,TARGET_PACKAGE_MMS)) {
             case "6.6.5":
                 EDITTEXT_ID = "com.tencent.mm:id/aac";
                 break;
@@ -49,10 +42,6 @@ public class Constant {
                 EDITTEXT_ID = "com.tencent.mm:id/aaa";
                 break;
         }
-        return EDITTEXT_ID;
     }
-
-
-
 
 }
