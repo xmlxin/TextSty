@@ -31,6 +31,9 @@ public class Constant {
 
     public static final String APP_ID = "20180524000165309";
     public static final String SECURITY_KEY = "v0Ct47KEYz_VLJgTsANZ";
+    //若当月翻译字符数≤2百万，当月免费 我不信能用超
+
+    //http://api.fanyi.baidu.com/api/trans/product/apidoc#appendix 翻译
 
     static {
 

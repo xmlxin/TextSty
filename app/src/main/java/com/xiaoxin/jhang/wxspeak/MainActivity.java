@@ -13,21 +13,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.util.EventLogTags;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.xiaoxin.jhang.wxspeak.adapter.TextAdapter;
 import com.xiaoxin.jhang.wxspeak.adapter.TextWatcherAdapter;
@@ -37,11 +31,8 @@ import com.xiaoxin.jhang.wxspeak.util.SharedPreferencesUtils;
 import com.xiaoxin.jhang.wxspeak.util.TextStyUtils;
 import com.xiaoxin.jhang.wxspeak.util.TrackerWindowManager;
 import com.xiaoxin.jhang.wxspeak.util.TransApi;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,30 +72,18 @@ public class MainActivity extends AppCompatActivity {
 //            Toast.makeText(this, "模块未激活", Toast.LENGTH_SHORT).show();
 //        }
 
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    TransApi  api = new TransApi(Constant.APP_ID, Constant.SECURITY_KEY);
-
-                    String dst =  (new JSONObject( new JSONObject(api.getTransResult("你好", "auto", "en")).getJSONArray("trans_result").get(0).toString())).getString("dst");
-//                    String dst = jsonObject1.getString("dst");
-                    Log.e(TAG, "run: "+dst );
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-
+//        Intent intent = new Intent();
+//        intent.setData(Uri.parse("mqqwpa://im/chat?chat_type=wpa&uin=1764859135&version=1"));
+//        startActivity(intent);
 
         mWindowManagerUtil = new TrackerWindowManager(this);
         etContent = (EditText) findViewById( R.id.et_content);
         rvList = (RecyclerView) findViewById(R.id.rv_list);
         initAdapter();
+        etContent.setVisibility(View.VISIBLE);
 
-//        showDialog();
-//        checkPermission();
+        showDialog();
+        checkPermission();
         etContent.addTextChangedListener(new TextWatcherAdapter(){
             @Override
             public void afterTextChanged(Editable editable) {
