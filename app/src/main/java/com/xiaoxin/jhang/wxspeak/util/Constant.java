@@ -44,6 +44,9 @@ public class Constant {
             case "6.6.6":
                 EDITTEXT_ID = "com.tencent.mm:id/aaa";
                 break;
+            case "6.6.7":
+                EDITTEXT_ID = "com.tencent.mm:id/ac8";
+                break;
             default:
                 EDITTEXT_ID = "com.tencent.mm:id/aaa";
                 break;
